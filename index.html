@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مبادرة سوا بنتخطى</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* ----------- نفس التنسيقات اللي عندك ----------- */
+    html, body { height: 100%; margin: 0; font-family: 'Arial', sans-serif; }
+    .poster-container { position: relative; width: 100%; min-height: 100%; background-color: #222; text-align: right; direction: rtl; overflow: hidden; }
+    .background-image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('students.jpg'); background-size: cover; background-position: center top; opacity: 0.5; z-index: 1; }
+    .content { position: relative; z-index: 10; color: white; padding: 40px 20px; }
+    .main-title { font-size: 2.4em; font-weight: bold; margin-bottom: 20px; color: #F8B400; text-align: center; }
+    .description { font-size: 1.3em; line-height: 1.8; margin-bottom: 30px; background-color: rgba(0,0,0,0.5); padding: 15px; border-radius: 8px; }
+    .highlight { color: #FFD700; font-weight: bold; }
+    .donation-details { margin: 30px 0; }
+    .section { border-bottom: 1px solid rgba(255, 255, 255, 0.3); padding: 15px 0; }
+    .section-title { font-size: 1.4em; font-weight: bold; display: inline-block; margin-right: 10px; }
+    .icon { font-size: 1.6em; color: #F8B400; vertical-align: middle; margin-left: 8px; }
+    .details { font-size: 1.2em; margin-top: 5px; }
+    .copy-btn { margin-right: 10px; padding: 3px 8px; font-size: 0.9em; border: none; border-radius: 4px; background-color: #F8B400; color: black; cursor: pointer; transition: background 0.3s; }
+    .copy-btn:hover { background-color: #FFD700; }
+    .donate-button { display: block; width: 60%; margin: 30px auto; background-color: #FFD700; color: black; text-align: center; padding: 15px 25px; font-size: 1.5em; font-weight: bold; text-decoration: none; border-radius: 5px; transition: all 0.3s ease; }
+    .donate-button:hover { background-color: #F8B400; transform: scale(1.05); }
+    .footer { position: relative; bottom: 0; left: 0; right: 0; padding: 10px; background-color: rgba(0, 0, 0, 0.7); z-index: 10; }
+    .contact-info { text-align: center; font-size: 0.9em; margin-bottom: 5px; color: #F8B400; }
+    .tagline { text-align: center; font-size: 0.9em; color: #F8B400; }
+    @media (max-width: 768px) { .main-title { font-size: 2em; } .description { font-size: 1em; } .donate-button { width: 80%; font-size: 1.2em; } }
+    .whatsapp-float { position: fixed; width: 55px; height: 55px; bottom: 20px; left: 20px; background-color: #F8B400; color: white; border-radius: 50%; text-align: center; font-size: 28px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); z-index: 9999; line-height: 55px; text-decoration: none; transition: transform 0.3s ease; }
+    .whatsapp-float:hover { transform: scale(1.1); }
+    /* --------- مودال --------- */
+    .modal { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+    .modal-content { background: #fff; border-radius: 12px; padding: 20px; width: 90%; max-width: 500px; position: relative; }
+    .close { position: absolute; top: 10px; left: 10px; font-size: 20px; cursor: pointer; }
+    .tabs { display: flex; gap: 8px; justify-content: center; margin: 20px 0; }
+    .tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; background: #eee; border-radius: 8px; font-weight: 600; }
+    .tab.active { background: #007bff; color: white; }
+    form { display: none; }
+    form.active { display: block; }
+    label { display: block; margin: 8px 0 4px; font-weight: 600; color: #FFD700; }
+    input[type="text"], input[type="number"], input[type="file"] { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 10px; }
+    button[type="submit"] { background:#F8B400; color:#000; font-weight:600; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; width:100%; }
+  </style>
+</head>
+<body>
+  <div class="poster-container">
+    <div class="background-image"></div>
+    <div class="content">
+      <h1 class="main-title">📚✨ مبادرة "سوا بنتخطى" لدعم الطلاب المحتاجين ✨📚</h1>
+      <p class="description">
+        الحمد لله الذي وفقنا وأعاننا على إكمال امتحاناتنا رغم الظروف الصعبة، ونحن الآن على أعتاب السنة الدراسية 2022 – 2023 متمنين أن تكون سنة خير وتوفيق للجميع 💙<br><br>
+        لكن للأسف، مع قرب إعلان النتيجة أوضحت الإدارة:<br>
+        🔹 لن يكون هناك أي تأجيل أو استثناء للطلاب غير المسددين للرسوم.<br>
+        🔹 أي طالب لم يسدد سيتم فصله مباشرة بعد إعلان النتيجة.<br><br>
+        وهذا الأمر مؤلم جدًا، لأن هناك عددًا كبيرًا من الطلاب اجتهدوا وتعبوا في ظروف قاسية، ولا يستحقون أن يُحرموا من مواصلة دربهم بسبب الظروف المادية.<br><br>
+        ✊ لذلك أطلقنا مبادرة:<br>
+        🌟 <span class="highlight">"سوا بنتخطى"</span> 🌟<br>
+        لنقف مع الطلاب المحتاجين ونجمع التبرعات لدفع رسومهم، وأي مساهمة مهما كانت بسيطة قادرة تصنع فرقًا كبيرًا 🙏<br><br>
+        💡 خلونا نكون سبب في فرحة طالب… وفي استمراره نحو المستقبل.
+      </p>
+
+
+      <div class="donation-details">
+        <div class="section"><span class="icon">🏦</span><span class="section-title">بنكك:</span><p class="details">4648733 <button class="copy-btn" onclick="copyText('4648733')">📋 نسخ</button></p></div>
+        <div class="section"><span class="icon">📲</span><span class="section-title">المحفظة الالكترونيه:</span><p class="details">01107199841 <button class="copy-btn" onclick="copyText('01107199841')">📋 نسخ</button></p></div>
+        <div><button class="donate-button" onclick="openModal()">🌟 إرسال تبرع</button></div>
+      </div>
+
+      <div class="footer">
+        <p class="contact-info">للإستفسار • +249 92 053 6546</p>
+        <p class="tagline">🤝 يدًا بيد… سوا بنقدر، وسوا بنتخطى 💙</p>
+      </div>
+    </div>
+  </div>
+  <a href="https://wa.me/201107199841" class="whatsapp-float" target="_blank">💬</a>
+
+  <!-- Modal -->
+  <div class="modal" id="donationModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">✖</span>
+      <h3 style="text-align:center">نموذج تحويل التبرع</h3>
+      <div class="tabs">
+        <div class="tab active" onclick="showForm('bankForm', this)">بنكك</div>
+        <div class="tab" onclick="showForm('walletForm', this)">المحفظة الإلكترونية</div>
+      </div>
+      <!-- بنكك -->
+      <form id="bankForm" class="active">
+        <label>قيمة التبرع</label><input type="number" name="amount" placeholder="قيمة التبرع" required>
+        <label>رقم الحساب</label><input type="text" name="account" value=""
+placeholder="4648733"required>
+        <label>اسم المتبرع</label><input type="text" name="donor_name"
+placeholder="إسم المتبرع"required>
+        <label>صورة الإشعار</label><input type="file" name="receipt" accept="صورة" required>
+        <button type="submit">إرسال</button>
+      </form>
+      <!-- المحفظة -->
+      <form id="walletForm">
+        <label>قيمة التبرع</label><input type="number" name="amount"
+placeholder="قيمة التبرع"required>
+        <label>رقم الهاتف</label><input type="text" name="number" placeholder="+249XXXXXXXXX" required>
+        <label>اسم المتبرع</label><input type="text" name="donor_name" placeholder="إسم المتبرع"
+required>
+        <label>صورة الإشعار</label><input type="file" name="receipt" accept="image/*" required>
+        <button type="submit">إرسال</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkYWNweGxycXducGF5ZHZ1ZGVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0OTgxMTUsImV4cCI6MjA3NTA3NDExNX0.eefcRkZWP3paICTClAuJ-yzoWKwPCOUiSN1POR_7qF8"; // حط الـ anon key كامل هنا
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    function copyText(text){ navigator.clipboard.writeText(text).then(()=>alert("تم نسخ: " + text)); }
+    function openModal(){ document.getElementById("donationModal").style.display="flex"; }
+    function closeModal(){ document.getElementById("donationModal").style.display="none"; }
+    function showForm(id,el){ document.querySelectorAll(".modal form").forEach(f=>f.classList.remove("active")); document.getElementById(id).classList.add("active"); document.querySelectorAll(".modal .tab").forEach(t=>t.classList.remove("active")); el.classList.add("active"); }
+
+    // حفظ التبرعات
+    async function handleDonation(form, type){
+      const formData = new FormData(form);
+      const amount = formData.get("amount");
+      const name = formData.get("name");
+      const account = formData.get("account") || null;
+      const phone = formData.get("phone") || null;
+      const receiptFile = formData.get("receipt");
+      let receipt_url = null;
+
+      if(receiptFile && receiptFile.size > 0){
+        const fileName = `receipt_${Date.now()}.jpg`;
+        const { data, error } = await supabase.storage.from("receipts").upload(fileName, receiptFile);
+        if(!error) receipt_url = `${SUPABASE_URL}/storage/v1/object/public/receipts/${fileName}`;
+      }
+
+      const { error } = await supabase.from("donations").insert([{ donor_name:name, account, phone, amount, receipt_url }]);
+      if(error){ alert("❌ خطأ: " + error.message); console.log(error); }
+      else { alert("✅ تم تسجيل التبرع بنجاح"); form.reset(); closeModal(); }
+    }
+
+    document.getElementById("bankForm").addEventListener("submit",e=>{e.preventDefault();handleDonation(e.target,"bank");});
+    document.getElementById("walletForm").addEventListener("submit",e=>{e.preventDefault();handleDonation(e.target,"wallet");});
+
+    // لوحة المدير ?admin=1
+    (async ()=>{
+      if(new URLSearchParams(window.location.search).get("admin")=="1"){
+        const { data } = await supabase.from("donations").select("*").order("created_at",{ascending:false});
+        document.body.innerHTML = "<h2 style='text-align:center'>📊 قائمة التبرعات</h2><table border=1 style='width:100%;background:#fff'><tr><th>الاسم</th><th>المبلغ</th><th>الحساب/الهاتف</th><th>الصورة</th><th>التاريخ</th></tr>" +
+          data.map(d=>`<tr><td>${d.donor_name||""}</td><td>${d.amount}</td><td>${d.account||d.phone||""}</td><td>${d.receipt_url?'<a href="'+d.receipt_url+'" target="_blank">📎</a>':""}</td><td>${d.created_at}</td></tr>`).join("")+"</table>";
+      }
+    })();
+  </script>
+</body>
+</html>
